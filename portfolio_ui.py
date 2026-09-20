@@ -100,9 +100,18 @@ def export_portfolio(result, directory=None):
         raise ValueError("请先生成方案；更改参数后旧方案已清空。")
     directory = Path(directory) if directory is not None else EXPORT_DIR
     directory.mkdir(parents=True, exist_ok=True)
-    path = directory / f"portfolio_{datetime.now():%Y%m%d%H%M%S%f}.json"
-    # Separate namespace and exclusive creation: never overwrite earlier records.
-    with path.open("x", encoding="utf-8") as stream:
+    stem = f"portfolio_{datetime.now():%Y%m%d%H%M%S%f}"
+    suffix = 0
+    # A clock tick can repeat. Exclusive creation also protects concurrent exports.
+    while True:
+        name = stem if suffix == 0 else f"{stem}_{suffix}"
+        path = directory / f"{name}.json"
+        try:
+            stream = path.open("x", encoding="utf-8")
+            break
+        except FileExistsError:
+            suffix += 1
+    with stream:
         json.dump(result, stream, ensure_ascii=False, indent=2, allow_nan=False)
     return str(path.resolve())
 

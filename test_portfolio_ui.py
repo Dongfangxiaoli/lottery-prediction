@@ -1,5 +1,6 @@
 """New portfolio page contracts; all export checks use temporary directories."""
 import json
+from datetime import datetime
 from pathlib import Path
 import tempfile
 import unittest
@@ -46,10 +47,16 @@ class PortfolioUiTests(unittest.TestCase):
 
     def test_exclusive_json_export_and_empty_state_guard(self):
         values = portfolio_ui.make_portfolio("排列3", "组选6", 10, "均匀随机去重", 1, 42, {})
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory() as directory, patch.object(portfolio_ui, "datetime") as clock:
+            clock.now.return_value = datetime(2026, 9, 20, 12, 0, 0)
             first = portfolio_ui.export_portfolio(values[4], directory)
+            original = Path(first).read_bytes()
             second = portfolio_ui.export_portfolio(values[4], directory)
-            self.assertNotEqual(first, second)
+            third = portfolio_ui.export_portfolio(values[4], directory)
+            self.assertEqual(len({first, second, third}), 3)
+            self.assertEqual(Path(first).read_bytes(), original)
+            self.assertEqual(Path(second).read_bytes(), original)
+            self.assertEqual(Path(third).read_bytes(), original)
             result = json.loads(Path(first).read_text(encoding="utf-8"))
             self.assertEqual(len(result["tickets"]), 10)
         with self.assertRaises(ValueError):
