@@ -1,0 +1,46 @@
+# Local environments, caches and credentials
+.venv/
+venv/
+vendor_cp314/
+runtime/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.vscode/
+.idea/
+
+# Local draws, predictions, checkpoints and frozen personal studies
+data/
+models/
+results/
+evidence_runs/
+candidate_runs/
+logs/
+cache/
+*.log
+*.pth
+*.pt
+*.pkl
+*.pickle
+*.joblib
+
+# Private portable bundles and third-party binaries
+packaging/downloads/
+installers/
+dist/
+build/
+*.zip
+*.exe
+*.dll
+*.lib
+*.pdb
+*.egg-info/
+Thumbs.db
+.DS_Store

@@ -1,0 +1,4 @@
+* text=auto eol=lf
+# Preserve algorithm bytes used by frozen-protocol checksums on every platform.
+*.py -text
+*.bat text eol=crlf
